@@ -19,11 +19,11 @@ def main():
 
     #task 3
     img_path = "ip_images/sudoku.png"
-    # run_task_3(input_path=img_path, save_dir="op_images")
+    run_task_3(input_path=img_path, save_dir="op_images")
 
     #task 4
     img_path = "ip_images/quote.png"
-    # run_task_4(input_path=img_path , save_dir="op_images")
+    run_task_4(input_path=img_path , save_dir="op_images")
 
 if __name__ == "__main__":
     main()
