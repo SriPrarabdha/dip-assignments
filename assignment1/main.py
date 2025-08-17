@@ -1,7 +1,8 @@
 from tasks.task1 import plot_hist
+from tasks.task2 import run_task_2
+from tasks.task3 import run_task_3
+from tasks.task4 import run_task_4
 
-from src.otsu_bc import optimal_otsu_bc
-from src.otsu_ic import optimal_otsu_ic
 from src.otsu_adaptive import optimal_otsu_adapt
 
 from time import time
@@ -10,36 +11,20 @@ def main():
 
     # task 1
     img_path = "images/coins.png"
-    plot_hist(img_path)
+    plot_hist(img_path, save_dir="op_images")
 
-    # task 2.1
-
+    # task 2
     img_path = "images/coins.png"
-    otsu_inter_class = optimal_otsu_ic(img_path, 0)
-    t = time()
-
-    for _ in range(10000):
-        thres = otsu_inter_class.get_threshold()
-    print("average per call:", (time() - t) / 10000)
-    otsu_inter_class.plot_image()
-
-    #task 2.2
-
-    otsu_btw_class = optimal_otsu_bc(img_path , 20)
-    t = time()
-
-    for _ in range(10000):
-        thres = otsu_btw_class.get_threshold()
-    print("average per call:", (time() - t) / 10000)
-    otsu_btw_class.plot_image()
-
-    # base_case()
+    run_task_2(input_path=img_path, save_dir="op_images" , profiling=True, debug = False)    
 
     #task 3
-    img_path = "images/coins.png"
-    otsu_adapt = optimal_otsu_adapt(img_path)
+    img_path = "images/sudoku.png"
+    run_task_3(input_path=img_path, save_dir="op_images")
 
-    otsu_adapt.plot_image(window_size=5)
+    #task 4
+    img_path = "images/qoute.png"
+    run_task_4(input_path=img_path , save_dir="op_images")
+
 
 
 

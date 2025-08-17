@@ -57,7 +57,7 @@ class optimal_otsu_bc:
 
         return w1 * w2 * (mean1 - mean2) ** 2
 
-    def get_threshold(self):
+    def get_threshold(self, debug:Optional[bool] = None):
         max_var = -1
         t_opt = -1
         for t in range(256):
@@ -65,11 +65,14 @@ class optimal_otsu_bc:
             if var > max_var:
                 max_var = var
                 t_opt = t
-        print("btw class otsu threshold = ", t_opt)
+        if(debug): print("Optimal threshold acheived by maximizing btwclass variance:", t_opt)
+        
         return t_opt
     
-    def plot_image(self):
-        t_opt = self.get_threshold()
+    def plot_image(self, save_dir:str=None, debug:Optional[bool]=None):
+        t_opt = self.get_threshold(debug)
         plt.imshow(self.img_arr > t_opt, cmap='gray')
         plt.axis('off')
         plt.show()
+        if(save_dir): plt.savefig(f"{save_dir}/task2_bc_otsu_binary.png")
+        plt.close()

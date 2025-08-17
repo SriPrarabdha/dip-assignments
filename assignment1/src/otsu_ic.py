@@ -212,16 +212,20 @@ class optimal_otsu_ic:
         
         return (var_1 * n1 + var_2 * n2) / self.cum_count[-1]
 
-    def get_threshold(self):
+    def get_threshold(self, debug:Optional[bool]=None):
         t_opt = get_threshold_numba(self.cum_count, self.cum_sum, self.cum_sum_sq)
-        # print("my Optimal threshold:", t_opt)
+        if(debug) : print("Optimal threshold acheived by minimizing interclass variance:", t_opt)
         return t_opt
     
-    def plot_image(self):
-        t_opt = self.get_threshold()
+    def plot_image(self, save_dir:Optional[str]=None, task:Optional[int]=None, debug:Optional[bool]=None):
+        t_opt = self.get_threshold(debug=debug)
         plt.imshow(self.img_arr > t_opt, cmap='gray')
         plt.axis('off')
         plt.show()
+        if(save_dir): 
+            if(task): plt.savefig(f"{save_dir}/task3_adapt_otsu_full.png")
+            else : plt.savefig(f"{save_dir}/task2_ic_otsu_binary.png")
+        plt.close()
 
 
 def base_case(img_path:str):
@@ -233,7 +237,7 @@ def base_case(img_path:str):
         optimal_thresh, thresh_img = cv2.threshold(
             img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU
         )
-    print("average per call:", (time() - t) / 10000)
+    print("average time taken by cv2 implementation of otsu algo:", (time() - t) / 10000)
 
 
 if __name__ == "__main__":
