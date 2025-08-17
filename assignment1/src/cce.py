@@ -1,7 +1,7 @@
 import numpy as np
 from collections import deque
 from PIL import Image
-from otsu_ic import optimal_otsu_ic
+from .otsu_ic import optimal_otsu_ic
 import matplotlib.pyplot as plt
 
 class ConnectedComponents:

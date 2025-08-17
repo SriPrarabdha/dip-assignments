@@ -75,11 +75,14 @@ class good_enough_otsu_adapt:
 
         return output_img
 
-    def plot_image(self, window_size=15):
+    def plot_image(self, window_size=15, save_dir:Optional[str] = None):
         adaptive_img = self.adaptive_otsu(window_size)
         plt.imshow(adaptive_img, cmap='gray')
         plt.axis('off')
+        if(save_dir): plt.savefig(f"{save_dir}/task3_adapt_otsu_binary_{window_size}.png")
+        
         plt.show()
+        plt.close()
 
 
 
@@ -163,6 +166,8 @@ class optimal_otsu_adapt:
         adaptive_img = self.adaptive_otsu(window_size)
         plt.imshow(adaptive_img, cmap='gray')
         plt.axis('off')
-        plt.show()
+        
         if(save_dir): plt.savefig(f"{save_dir}/task3_adapt_otsu_binary_{window_size}.png")
+        
+        plt.show()
         plt.close()

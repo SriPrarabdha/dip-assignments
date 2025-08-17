@@ -1,5 +1,5 @@
-from ..src.otsu_adaptive import optimal_otsu_adapt
-from ..src.otsu_ic import optimal_otsu_ic
+from src.otsu_adaptive import optimal_otsu_adapt, good_enough_otsu_adapt
+from src.otsu_ic import optimal_otsu_ic
 
 from typing import Optional
 import os

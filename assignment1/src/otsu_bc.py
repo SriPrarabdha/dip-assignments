@@ -73,6 +73,7 @@ class optimal_otsu_bc:
         t_opt = self.get_threshold(debug)
         plt.imshow(self.img_arr > t_opt, cmap='gray')
         plt.axis('off')
-        plt.show()
         if(save_dir): plt.savefig(f"{save_dir}/task2_bc_otsu_binary.png")
+        
+        plt.show()
         plt.close()

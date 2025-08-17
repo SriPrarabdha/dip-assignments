@@ -9,28 +9,30 @@ from numba import njit
 import matplotlib.pyplot as plt
 import cv2
 
-# img = Image.open("images/coins.png")
-# img_arr = np.array(img)
 
-# hist = np.zeros(256, dtype='uint8')
 
-# for i in range(len(img_arr)):
-#     for j in range(len(img_arr[0])):
-#         hist[img_arr[i][j]]+=1
-
-@dataclass
 class brute_force_soln:
+    def __init__(self, image_path):
+            
+        self.img_arr = np.array(Image.open(image_path))
+
+        self.hist = np.zeros(256, dtype=np.uint32)
+
+        for i in range(len(self.img_arr)):
+                for j in range(len(self.img_arr[0])):
+                    self.hist[self.img_arr[i][j]]+=1
+
     def mean(self, cls: int , thres:int):
         pro = 0
         total_pixels = 0
         if(cls):
             for i in range(thres+1 , 256):
-                total_pixels+=hist[i]
-                pro+=(i*hist[i])
+                total_pixels+=self.hist[i]
+                pro+=(i*self.hist[i])
         else:
             for i in range(0, thres+1):
-                total_pixels+=hist[i]
-                pro+=(i*hist[i])
+                total_pixels+=self.hist[i]
+                pro+=(i*self.hist[i])
 
 
         return pro/total_pixels
@@ -40,12 +42,12 @@ class brute_force_soln:
         total_pixels = 0
         if(cls):
             for i in range(thres+1 , 256):
-                total_pixels+=hist[i]
-                pro+=((i-mean)*hist[i])
+                total_pixels+=self.hist[i]
+                pro+=((i-mean)*self.hist[i])
         else:
             for i in range(0, thres+1):
-                total_pixels+=hist[i]
-                pro+=((i-mean)*hist[i])
+                total_pixels+=self.hist[i]
+                pro+=((i-mean)*self.hist[i])
 
 
         return pro/total_pixels , total_pixels
@@ -57,7 +59,7 @@ class brute_force_soln:
         var_1, n1 = self.var(0, thres , mean_1)
         var_2 , n2= self.var(1, thres , mean_2)
 
-        n = len(hist) * len(hist[0])
+        n = len(self.hist) * len(self.hist[0])
 
         return (var_1*n1 + var_2*n2)/n
 
@@ -74,14 +76,24 @@ class brute_force_soln:
 
 @dataclass
 class better_soln:
+    def __init__(self, image_path):
+            
+        self.img_arr = np.array(Image.open(image_path))
+
+        self.hist = np.zeros(256, dtype=np.uint32)
+
+        for i in range(len(self.img_arr)):
+                for j in range(len(self.img_arr[0])):
+                    self.hist[self.img_arr[i][j]]+=1
+
     pixels = np.arange(256, dtype='uint8')
 
     def mean(self, cls: int , thres:int):
         if(cls): mask = self.pixels>thres
         else : mask = self.pixels<=thres
 
-        total_pixels = np.sum(hist[mask])
-        pro = (self.pixels[mask] * hist[mask]).sum()
+        total_pixels = np.sum(self.hist[mask])
+        pro = (self.pixels[mask] * self.hist[mask]).sum()
 
         return pro/total_pixels
 
@@ -89,8 +101,8 @@ class better_soln:
         if(cls): mask = self.pixels>thres
         else : mask = self.pixels<=thres
 
-        total_pixels = np.sum(hist[mask])
-        pro = (np.power(self.pixels[mask] - mean) * hist[mask]).sum()
+        total_pixels = np.sum(self.hist[mask])
+        pro = (np.power(self.pixels[mask] - mean) * self.hist[mask]).sum()
 
         return pro/total_pixels , total_pixels
 
@@ -101,7 +113,7 @@ class better_soln:
         var_1, n1 = self.var(0, thres , mean_1)
         var_2 , n2= self.var(1, thres , mean_2)
 
-        n = len(hist) * len(hist[0])
+        n = len(self.hist) * len(self.hist[0])
 
         return (var_1*n1 + var_2*n2)/n
 
@@ -115,11 +127,6 @@ class better_soln:
                 least_var = it_var
                 t_opt = t
 
-
-from dataclasses import dataclass
-import numpy as np
-
-from numba import njit
 
 @njit
 def get_threshold_numba(cum_count, cum_sum, cum_sum_sq):
@@ -145,13 +152,12 @@ def get_threshold_numba(cum_count, cum_sum, cum_sum_sq):
         sum1_sq = cum_sum_sq[-1] - sum0_sq
         var1 = (sum1_sq - 2 * mean1 * sum1 + mean1**2 * n1) / n1 if n1 > 0 else 0.0
 
-        # within-class variance
         wc_var = (var0 * n0 + var1 * n1) / total_pixels
         if wc_var < least_var:
             least_var = wc_var
             t_opt = t
 
-    print("inter class ousu threshold = ", t_opt)
+    # print("inter class ousu threshold = ", t_opt)
     return t_opt
 
 
@@ -221,10 +227,12 @@ class optimal_otsu_ic:
         t_opt = self.get_threshold(debug=debug)
         plt.imshow(self.img_arr > t_opt, cmap='gray')
         plt.axis('off')
-        plt.show()
+        
         if(save_dir): 
             if(task): plt.savefig(f"{save_dir}/task3_adapt_otsu_full.png")
             else : plt.savefig(f"{save_dir}/task2_ic_otsu_binary.png")
+        
+        plt.show()
         plt.close()
 
 

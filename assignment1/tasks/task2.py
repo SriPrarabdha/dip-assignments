@@ -1,5 +1,5 @@
-from ..src.otsu_bc import optimal_otsu_bc
-from ..src.otsu_ic import optimal_otsu_ic, base_case
+from src.otsu_bc import optimal_otsu_bc
+from src.otsu_ic import optimal_otsu_ic, base_case
 
 from typing import Optional
 import time

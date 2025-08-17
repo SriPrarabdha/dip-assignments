@@ -24,8 +24,10 @@ def plot_hist(img_path:str, save_dir:Optional[str]=None):
     plt.xlabel("Intensity Level")
     plt.ylabel("Frequency")
     plt.title("Pixel Histogram")
-    plt.show()
+    
     if(save_dir): plt.savefig(f"{save_dir}/task1_histogram.png")
+    
+    plt.show()
 
     total_pixels = len(img_arr) * len(img_arr[0])
     avg_from_hist = sum(i * hist[i] for i in range(256)) / total_pixels

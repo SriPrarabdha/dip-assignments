@@ -1,4 +1,4 @@
-from ..src.cce import ConnectedComponents
+from src.cce import ConnectedComponents
 
 import matplotlib.pyplot as plt
 from typing import Optional
@@ -16,8 +16,8 @@ def run_task_4(input_path:str, save_dir:Optional[bool]=None):
     print("Component sizes:", sizes)
 
     plt.plot(); plt.imshow(largest_mask, cmap="gray"); plt.title("Largest")
-    plt.show()
-
+    
     if(save_dir) : plt.savefig(f"{save_dir}/task4_cce.png")
-
+    
+    plt.show()
     plt.close()
