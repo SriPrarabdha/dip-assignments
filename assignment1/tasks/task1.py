@@ -2,9 +2,10 @@ from PIL import Image
 import numpy as np
 from pprint import pprint
 import matplotlib.pyplot as plt
+from typing import Optional
 
 
-def plot_hist(img_path:str):
+def plot_hist(img_path:str, save_dir:Optional[str]=None):
     img = Image.open(img_path)
 
     img_arr = np.array(img)
@@ -22,8 +23,9 @@ def plot_hist(img_path:str):
     plt.bar(range(256), hist, width=1.0, color='gray')
     plt.xlabel("Intensity Level")
     plt.ylabel("Frequency")
-    plt.title("Histogram of coins.png (Manual Computation)")
+    plt.title("Pixel Histogram")
     plt.show()
+    if(save_dir): plt.savefig(f"{save_dir}/task1_histogram.png")
 
     total_pixels = len(img_arr) * len(img_arr[0])
     avg_from_hist = sum(i * hist[i] for i in range(256)) / total_pixels
