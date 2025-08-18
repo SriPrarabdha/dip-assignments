@@ -32,7 +32,7 @@ class optimal_otsu_bc:
         self.cum_sum_sq = np.cumsum(self.hist * (self.pixels ** 2), dtype=np.uint64)
 
         self.global_mean = self.cum_sum[-1]/self.cum_count[-1]
-        self.global_var = (self.cum_sum_sq[-1] - 2 * self.global_mean * self.cum_sum[-1] + self.global_mean**2 * self.cum_count[-1]) / self.cum_count[-1]
+        # self.global_var = (self.cum_sum_sq[-1] - 2 * self.global_mean * self.cum_sum[-1] + self.global_mean**2 * self.cum_count[-1]) / self.cum_count[-1]
 
     def mean(self, cls: int, thres: int):
         if cls:
