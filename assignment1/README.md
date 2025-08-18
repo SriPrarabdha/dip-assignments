@@ -24,7 +24,7 @@ python main.py
 ### Sailent features
 
 This implementation for otsu's algorithm beats the official highly c++ optimized code use by cv2 library by almost 10x
-<br><br><br>
+<br><br>
 After running the experiment for multiple times these are averaged out results
 <br><hr>
 This Implementation : 4.82 * 10 ^ -6 sec <br>

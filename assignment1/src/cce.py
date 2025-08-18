@@ -9,18 +9,15 @@ class ConnectedComponents:
         otsu_inter_class = optimal_otsu_ic(image_path, 0)
         thres = otsu_inter_class.get_threshold()
         
-        # ensure grayscale
         img_arr = np.array(Image.open(image_path), dtype=np.uint8)
         
-        # binarize properly
         self.binary_image = (img_arr > thres).astype(np.uint8)
         self.h, self.w = self.binary_image.shape
         
-        # placeholders
         self.labels = np.zeros_like(self.binary_image, dtype=np.uint32)
         self.current_label = 0
 
-        # 8-neighbourhood offsets
+        # 8-neighbourhood
         self.neigh = [(-1, -1), (-1, 0), (-1, 1),
                       (0, -1),           (0, 1),
                       (1, -1),  (1, 0),  (1, 1)]

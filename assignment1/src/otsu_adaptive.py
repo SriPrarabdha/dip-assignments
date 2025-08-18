@@ -18,7 +18,6 @@ class good_enough_otsu_adapt:
     def __init__(self, image_path: str, offset: Optional[int] = None):
         self.img_arr = np.array(Image.open(image_path).convert("L"), dtype=np.uint8)  # force grayscale
 
-        # Apply optional offset safely
         if offset is not None:
             self.img_arr = self.img_arr.astype(np.int32) + offset
             self.img_arr = np.clip(self.img_arr, 0, 255).astype(np.uint8)
@@ -31,7 +30,6 @@ class good_enough_otsu_adapt:
         return hist
 
     def otsu_threshold_from_hist(self, hist):
-        """Given a histogram, compute Otsu threshold"""
         pixels = np.arange(256, dtype=np.float64)
         cum_count = np.cumsum(hist, dtype=np.uint32)
         cum_sum = np.cumsum(hist * pixels, dtype=np.float64)
