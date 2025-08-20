@@ -70,7 +70,8 @@ class good_enough_otsu_adapt:
         adaptive_img = self.adaptive_otsu(window_size)
         plt.imshow(adaptive_img, cmap='gray')
         plt.axis('off')
-        if(save_dir): plt.savefig(f"{save_dir}/task3_adapt_otsu_binary_{window_size}.png")
+        if(save_dir): plt.savefig(f"{save_dir}/task3_adapt_otsu_binary_{window_size}.png",
+                                  bbox_inches='tight', dpi=150)
         
         plt.show()
         plt.close()
@@ -153,7 +154,7 @@ class optimal_otsu_adapt:
         plt.imshow(adaptive_img, cmap='gray')
         plt.axis('off')
         
-        if(save_dir): plt.savefig(f"{save_dir}/task3_adapt_otsu_binary_{window_size}.png")
+        if(save_dir): plt.savefig(f"{save_dir}/task3_adapt_otsu_binary_{window_size}.png", bbox_inches='tight', dpi=150)
         
         plt.show()
         plt.close()

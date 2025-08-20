@@ -85,7 +85,8 @@ class ConnectedComponentExtractor:
         axes[1].imshow(color_img)
         axes[1].set_title("All Components")
         axes[1].axis("off")
-        if(save_dir): plt.savefig(f"{save_dir}/task4_cce.png")
+        if(save_dir): plt.savefig(f"{save_dir}/task4_cce.png",
+                                  bbox_inches='tight', dpi=150)
 
         plt.show()
 

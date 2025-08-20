@@ -229,8 +229,8 @@ class optimal_otsu_ic:
         plt.axis('off')
         
         if(save_dir): 
-            if(task): plt.savefig(f"{save_dir}/task3_adapt_otsu_full.png")
-            else : plt.savefig(f"{save_dir}/task2_ic_otsu_binary.png")
+            if(task): plt.savefig(f"{save_dir}/task3_adapt_otsu_full.png", bbox_inches='tight', dpi=150)
+            else : plt.savefig(f"{save_dir}/task2_ic_otsu_binary.png", bbox_inches='tight', dpi=150)
         
         plt.show()
         plt.close()
