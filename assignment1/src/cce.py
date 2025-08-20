@@ -1,74 +1,92 @@
 import numpy as np
-from collections import deque
 from PIL import Image
-from .otsu_ic import optimal_otsu_ic
 import matplotlib.pyplot as plt
+from collections import deque
+from typing import Optional
 
-class ConnectedComponents:
-    def __init__(self, image_path:str):
-        otsu_inter_class = optimal_otsu_ic(image_path, 0)
-        thres = otsu_inter_class.get_threshold()
-        
-        img_arr = np.array(Image.open(image_path), dtype=np.uint8)
-        
-        self.binary_image = (img_arr > thres).astype(np.uint8)
-        self.h, self.w = self.binary_image.shape
-        
-        self.labels = np.zeros_like(self.binary_image, dtype=np.uint32)
-        self.current_label = 0
+from .otsu_ic import optimal_otsu_ic
 
-        # 8-neighbourhood
-        self.neigh = [(-1, -1), (-1, 0), (-1, 1),
-                      (0, -1),           (0, 1),
-                      (1, -1),  (1, 0),  (1, 1)]
+class ConnectedComponentExtractor:
+    def __init__(self, image_path: str):
+        self.image_path = image_path
+        self.original_img = np.array(Image.open(image_path))
 
-    def bfs(self, x, y):
-        q = deque()
-        q.append((x, y))
-        self.current_label += 1
-        self.labels[x, y] = self.current_label
-        size = 1
+        otsu_inter_class = optimal_otsu_ic(image_path)
+        self.thres = otsu_inter_class.get_threshold(debug=True)
 
-        while q:
-            cx, cy = q.popleft()
-            for dx, dy in self.neigh:
-                nx, ny = cx + dx, cy + dy
-                if (0 <= nx < self.h) and (0 <= ny < self.w):
-                    if self.binary_image[nx, ny] == 1 and self.labels[nx, ny] == 0:
-                        self.labels[nx, ny] = self.current_label
-                        q.append((nx, ny))
-                        size += 1
-        return size
+        self.binary_img = (self.original_img < self.thres).astype(np.uint8)
 
-    def extract_components(self):
-        # reset each time
-        self.labels = np.zeros_like(self.binary_image, dtype=np.uint32)
-        self.current_label = 0
-        component_sizes = {}
-        
-        for i in range(self.h):
-            for j in range(self.w):
-                if self.binary_image[i, j] == 1 and self.labels[i, j] == 0:
-                    size = self.bfs(i, j)
-                    component_sizes[self.current_label] = size
-        return self.labels, component_sizes
+    def _connected_components(self, binary_img):
+        """Label connected components with 8-connectivity."""
+        h, w = binary_img.shape
+        labels = np.zeros((h, w), dtype=np.int32)
+        label = 0
+        areas = {}
 
-    def largest_component_mask(self):
-        labels, sizes = self.extract_components()
-        if not sizes:
-            return np.zeros_like(self.binary_image)
-        largest_label = max(sizes, key=sizes.get)
-        return (labels == largest_label).astype(np.uint8)
+        # 8-neighbour relative positions
+        neighbors = [(-1, -1), (-1, 0), (-1, 1),
+                     (0, -1),           (0, 1),
+                     (1, -1),  (1, 0),  (1, 1)]
+
+        for i in range(h):
+            for j in range(w):
+                if binary_img[i, j] == 1 and labels[i, j] == 0:
+                    label += 1
+                    q = deque([(i, j)])
+                    labels[i, j] = label
+                    area = 0
+
+                    while q:
+                        x, y = q.popleft()
+                        area += 1
+                        for dx, dy in neighbors:
+                            nx, ny = x + dx, y + dy
+                            if (0 <= nx < h and 0 <= ny < w and
+                                binary_img[nx, ny] == 1 and labels[nx, ny] == 0):
+                                labels[nx, ny] = label
+                                q.append((nx, ny))
+
+                    areas[label] = area
+        return labels, areas
+
+    def extract_all_components(self):
+        labels, areas = self._connected_components(self.binary_img)
+        num_labels = len(areas)
+
+        rng = np.random.default_rng(42)
+        colors = rng.integers(50, 255, size=(num_labels + 1, 3), dtype=np.uint8)
+        colors[0] = [0, 0, 0] 
+
+        # color map image
+        h, w = labels.shape
+        color_img = np.zeros((h, w, 3), dtype=np.uint8)
+        for lbl in range(1, num_labels + 1):
+            color_img[labels == lbl] = colors[lbl]
+
+        if self.original_img.ndim == 2:  
+            highlighted = np.stack([self.original_img]*3, axis=-1).copy()
+        else: 
+            highlighted = self.original_img.copy()
+
+        mask = labels > 0
+        highlighted[mask] = color_img[mask]
+
+        return color_img, highlighted
 
 
-if __name__ == "__main__":
-    cc = ConnectedComponents("ip_images/quote.png")
-    labels, sizes = cc.extract_components()
-    largest_mask = cc.largest_component_mask()
+    def plot_results(self, save_dir:Optional[str] = None):
+        color_img, highlighted = self.extract_all_components()
 
-    print("Component sizes:", sizes)
+        fig, axes = plt.subplots(1, 2, figsize=(18, 6))
+        axes[0].imshow(self.original_img, cmap='gray')
+        axes[0].set_title("Original Image")
+        axes[0].axis("off")
 
-    plt.plot(); plt.imshow(largest_mask, cmap="gray"); plt.title("Largest")
-    plt.show()
+        axes[1].imshow(color_img)
+        axes[1].set_title("All Components")
+        axes[1].axis("off")
+        if(save_dir): plt.savefig(f"{save_dir}/task4_cce.png")
+
+        plt.show()
 
 

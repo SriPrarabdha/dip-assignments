@@ -9,11 +9,6 @@ from numba import njit
 import matplotlib.pyplot as plt
 import cv2
 
-import numpy as np
-from PIL import Image
-import matplotlib.pyplot as plt
-from typing import Optional
-
 class good_enough_otsu_adapt:
     def __init__(self, image_path: str, offset: Optional[int] = None):
         self.img_arr = np.array(Image.open(image_path).convert("L"), dtype=np.uint8)  # force grayscale
@@ -23,7 +18,6 @@ class good_enough_otsu_adapt:
             self.img_arr = np.clip(self.img_arr, 0, 255).astype(np.uint8)
 
     def compute_histogram(self, arr):
-        """Compute histogram for a given 2D window"""
         hist = np.zeros(256, dtype=np.uint32)
         for val in arr.flatten():
             hist[val] += 1
@@ -59,7 +53,6 @@ class good_enough_otsu_adapt:
         return t_opt
 
     def adaptive_otsu(self, window_size=15):
-        """Apply Otsu thresholding on local window for each pixel"""
         pad = window_size // 2
         padded_img = np.pad(self.img_arr, pad, mode="reflect")
         output_img = np.zeros_like(self.img_arr)
@@ -108,10 +101,7 @@ class optimal_otsu_adapt:
                 )
 
     def get_histogram_from_window(self, x1, y1, x2, y2):
-        """
-        Return histogram for window (inclusive) in O(256) using integral histogram.
-        (x1, y1) = top-left, (x2, y2) = bottom-right
-        """
+
         return (
             self.integral_hist[x2+1, y2+1]
             - self.integral_hist[x1, y2+1]
@@ -120,7 +110,6 @@ class optimal_otsu_adapt:
         )
 
     def otsu_threshold_from_hist(self, hist):
-        """Compute Otsu threshold given a histogram (using precomputed pixels)"""
         cum_count = np.cumsum(hist)
         cum_sum = np.cumsum(hist * self.pixels)
 
@@ -144,7 +133,6 @@ class optimal_otsu_adapt:
         return t_opt
 
     def adaptive_otsu(self, window_size=15):
-        """Adaptive Otsu threshold using integral histograms"""
         pad = window_size // 2
         output_img = np.zeros_like(self.img_arr)
 

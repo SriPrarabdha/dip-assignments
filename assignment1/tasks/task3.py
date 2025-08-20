@@ -1,4 +1,5 @@
 from src.otsu_adaptive import optimal_otsu_adapt, good_enough_otsu_adapt
+from src.otsu_adaptive_fast import fast_otsu_adapt
 from src.otsu_ic import optimal_otsu_ic
 
 from typing import Optional
@@ -8,8 +9,8 @@ def run_task_3(input_path:str, save_dir:Optional[str]=None):
     if save_dir and not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
-    otsu_adapt = optimal_otsu_adapt(input_path)
-    otsu_inter_class = optimal_otsu_ic(input_path, 0)
+    otsu_adapt = fast_otsu_adapt(input_path)
+    otsu_inter_class = optimal_otsu_ic(input_path)
 
     #task 3.1
 
@@ -32,3 +33,6 @@ def run_task_3(input_path:str, save_dir:Optional[str]=None):
     otsu_inter_class.plot_image(save_dir=save_dir, task=3)
 
     
+
+if __name__ == "__main__":
+    run_task_3("ip_images/sudoku.png")

@@ -3,10 +3,6 @@ from tasks.task2 import run_task_2
 from tasks.task3 import run_task_3
 from tasks.task4 import run_task_4
 
-from src.otsu_adaptive import optimal_otsu_adapt
-
-from time import time
-
 def main():
 
     # task 1
@@ -23,7 +19,7 @@ def main():
 
     #task 4
     img_path = "ip_images/quote.png"
-    run_task_4(input_path=img_path , save_dir="op_images")
+    run_task_4(image_path=img_path , save_dir="op_images")
 
 if __name__ == "__main__":
     main()

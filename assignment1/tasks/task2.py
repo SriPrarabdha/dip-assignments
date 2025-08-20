@@ -36,9 +36,3 @@ def run_task_2(input_path:str, save_dir:Optional[str] = None , profiling:Optiona
 
 if __name__ == "__main__":
     run_task_2()
-
-
-
-
-
-
