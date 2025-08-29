@@ -25,10 +25,9 @@ if __name__ == "__main__":
         type=int,
         nargs="+",            
         default=[1,2,3,4],         
-        help="Which task(s) do you want to run? Default is [0]."
+        help="Which task(s) do you want to run? Default is all."
     )
     args = parser.parse_args()
-    print(args.task)
     
     main(args.task)   
     

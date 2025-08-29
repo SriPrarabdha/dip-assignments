@@ -8,7 +8,11 @@ pip install -r requirements.txt
 ```
 
 ```
+python main.py --task 1 2 3
+# This will run tasks 1, 2, 3
+
 python main.py
+#This is default and will run all the experiments
 ```
 
 ### Code Structure
