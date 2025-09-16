@@ -171,6 +171,10 @@ class optimal_otsu_ic:
             self.img_arr = self.img_arr.astype(np.int32) + offset
             self.img_arr = np.clip(self.img_arr, 0, 255).astype(np.uint8)
 
+            #[0,1,2,1,1,4] -> [0,1,2,1,1,0]
+            # 4 -> 0
+            #7 -> 3 
+
         self.hist = np.zeros(256, dtype=np.uint32)
 
         for i in range(len(self.img_arr)):

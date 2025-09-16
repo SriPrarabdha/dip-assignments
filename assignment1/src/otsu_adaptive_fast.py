@@ -48,7 +48,7 @@ def otsu_threshold_numba(hist):
 
 @njit(parallel=True)
 def process_windows_integral_parallel(img_arr, integral_hist, window_size, stride, window_positions):
-    """Parallel processing using integral histograms"""
+
     output_img = np.zeros_like(img_arr)
     pad = window_size // 2
     H, W = img_arr.shape
@@ -57,20 +57,16 @@ def process_windows_integral_parallel(img_arr, integral_hist, window_size, strid
     for idx in prange(len(window_positions)):
         i, j = window_positions[idx]
         
-        # Define window boundaries for histogram calculation
         x1 = max(0, i - pad)
         x2 = min(H - 1, i + pad)
         y1 = max(0, j - pad)
         y2 = min(W - 1, j + pad)
         
-        # Get histogram using integral histogram
         hist = (integral_hist[x2+1, y2+1] - integral_hist[x1, y2+1] - 
                 integral_hist[x2+1, y1] + integral_hist[x1, y1])
         
-        # Compute Otsu threshold
         t_local = otsu_threshold_numba(hist)
         
-        # Apply threshold to stride region
         end_i = min(i + stride, H)
         end_j = min(j + stride, W)
         
@@ -112,7 +108,7 @@ class fast_otsu_adapt:
         j_positions = np.arange(0, self.W, stride)
         window_positions = np.array([(i, j) for i in i_positions for j in j_positions])
         
-        # Use parallel processing with integral histograms
+        #integral histograms
         output_img = process_windows_integral_parallel(
             self.img_arr, self.integral_hist, window_size, stride, window_positions
         )
@@ -120,7 +116,7 @@ class fast_otsu_adapt:
         return output_img
     
     
-    def plot_image(self, method='vectorized', window_size=15, save_dir: Optional[str] = None):  
+    def plot_image(self, window_size=15, save_dir: Optional[str] = None):  
         start_time = time()
         adaptive_img = self.adaptive_otsu_vectorized(window_size)
         end_time = time()
