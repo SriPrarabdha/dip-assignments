@@ -1,7 +1,7 @@
 #include "imageproc/binarize.hpp"
 #include <opencv2/imgproc.hpp>
 #include <iostream>
-#include "Gnuplot-iostream.h" 
+#include "gnuplot-iostream.h" 
 
 
 using namespace std;
@@ -30,18 +30,19 @@ namespace imageproc {
             for (int j = 0; j < img.cols; j++) {
                 uchar pixel = img.at<uchar>(i, j);  
                 // std::cout << static_cast<int>(pixel) << "\n";
-                hist[static_cast<int>(pixel)]++;
+                hist[pixel]++;
             }
         }
 
         vector<pair<int,int>> histData;
-        for (int i = 0; i <= 255; i++) {
+
+        for (int i = 0; i < 256; i++) {
             histData.push_back({i, hist[i]});
         }
 
-        // Plot with gnuplot
+        // Plot histogram
         Gnuplot gp;
-        gp << "set title 'Image Histogram'\n";
+        gp << "set title 'Grayscale Histogram'\n";
         gp << "set xlabel 'Intensity'\n";
         gp << "set ylabel 'Frequency'\n";
         gp << "set style fill solid\n";

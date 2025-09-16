@@ -5,9 +5,14 @@ project(imageproc LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Find OpenCV
 find_package(OpenCV REQUIRED)
-find_package(Gnuplot REQUIRED COMPONENTS iostream)
+find_package(Boost REQUIRED COMPONENTS iostreams system filesystem)
+
+find_program(GNUPLOT_EXECUTABLE gnuplot)
+
+if(NOT GNUPLOT_EXECUTABLE)
+    message(FATAL_ERROR "gnuplot executable not found")
+endif()
 
 # Make library from src/*.cpp
 add_library(imageproc
@@ -16,14 +21,35 @@ add_library(imageproc
     src/io.cpp
 )
 
-# Public headers are in include/
+# # Public headers are in include/
+# target_include_directories(imageproc
+#     PUBLIC 
+#         ${PROJECT_SOURCE_DIR}/include
+#         ${PROJECT_SOURCE_DIR}/include/gnuplot-iostream
+# )
+
+# include_directories(${Boost_INCLUDE_DIRS})
+
+# # Link OpenCV to our library
+# target_link_libraries(imageproc
+#     PUBLIC ${OpenCV_LIBS}
+#     PUBLIC ${Boost_LIBRARIES}
+# )
+
 target_include_directories(imageproc
-    PUBLIC ${PROJECT_SOURCE_DIR}/include
+    PUBLIC 
+        ${PROJECT_SOURCE_DIR}/include
+        ${PROJECT_SOURCE_DIR}/include/gnuplot-iostream
+        ${Boost_INCLUDE_DIRS}
 )
 
-# Link OpenCV to our library
+# Link libraries
 target_link_libraries(imageproc
-    PUBLIC ${OpenCV_LIBS}
+    PUBLIC 
+        ${OpenCV_LIBS}
+        Boost::iostreams
+        Boost::system
+        Boost::filesystem
 )
 
 # Add apps subdirectory

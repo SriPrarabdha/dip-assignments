@@ -4,7 +4,10 @@
 - OpenCV >= 4.0
 
 ### Ubuntu
+sudo apt update
 sudo apt install build-essential cmake libopencv-dev
+sudo apt-get install libboost-all-dev
+
 
 ### macOS
 brew install cmake opencv
