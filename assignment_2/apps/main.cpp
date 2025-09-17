@@ -12,7 +12,8 @@ int main() {
 
     imageproc::OtsuBinarizer binarizer;
     double opt_var = 0.12;
-    binarizer.apply(img, opt_var);        
+    auto output_img = binarizer.apply(img, opt_var, 1);        
+    imageproc::io::showImage("thresholded image", output_img);
     // Try different filter sizes
     // for (int m : {5, 29, 129}) {
     //     imageproc::BoxFilter bf(m);
