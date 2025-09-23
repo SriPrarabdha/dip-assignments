@@ -18,6 +18,7 @@ add_library(imageproc
     src/filter.cpp
     src/binarize.cpp
     src/io.cpp
+    src/transforms.cpp
 )
 
 

@@ -9,7 +9,7 @@ using namespace std;
 
 namespace imageproc {
 
-    cv::Mat OtsuBinarizer::apply(const cv::Mat& img, double& optimalVariance, std::optional<int> profile) const {
+    std::pair<cv::Mat,int> OtsuBinarizer::apply(const cv::Mat& img, std::optional<int> profile) const {
         bool profile_flag = profile.has_value();
 
         std::chrono::high_resolution_clock::time_point start;
@@ -68,7 +68,7 @@ namespace imageproc {
             if (var>max_var) {max_var = var; opt_thres = t;}
         }
 
-        cout<<opt_thres<<"\n";
+        // cout<<opt_thres<<"\n";
 
         // 5. return thresholded binary image
         cv::Mat output_img;
@@ -79,7 +79,7 @@ namespace imageproc {
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
             std::cout << "Otsu Thresholding took " << duration.count() << " ms." << std::endl;
         }
-        return output_img; 
+        return {output_img, opt_thres}; 
     }
 
     std::vector<int> OtsuBinarizer::computeHistogram(const cv::Mat& img, std::optional<int> plot) const {

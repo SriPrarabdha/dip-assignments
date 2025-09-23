@@ -27,10 +27,4 @@ chmod +x run.sh   # make it executable
 ./run.sh --filter box --input ../data/moon_noisy.png
 
 
-#include <vector>
-#include <array>
-#include <optional>
-#include <chrono>
-#include <iostream>
-#include <cstdint>
 

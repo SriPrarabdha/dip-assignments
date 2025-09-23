@@ -1,12 +1,13 @@
 #pragma once
 #include <string>
 #include <opencv2/core.hpp>
+#include <optional>
 
 namespace imageproc {
 
     namespace io {
         // load an image (grayscale)
-        cv::Mat loadImage(const std::string& path);
+        cv::Mat loadImage(const std::string& path, std::optional<int> greyscale = {});
 
         // save image to file
         void saveImage(const std::string& path, const cv::Mat& img);

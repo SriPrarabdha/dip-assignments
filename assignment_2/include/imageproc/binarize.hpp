@@ -7,7 +7,7 @@ namespace imageproc {
     class OtsuBinarizer {
     public:
         // apply Otsu's thresholding on input image
-        cv::Mat apply(const cv::Mat& input, double& optimalVariance, std::optional<int> profile = {}) const;
+        std::pair<cv::Mat,int> apply(const cv::Mat& input, std::optional<int> profile = {}) const;
 
     private:
         // helper: compute histogram of grayscale image
