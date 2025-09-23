@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-
+#include <optional>
 namespace apps {
-    void run_blur_experiment(const std::string& image_path);
+    void run_blur_experiment(const std::string& image_path , std::optional<std::string> save_dir={});
 }
