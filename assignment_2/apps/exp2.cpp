@@ -6,7 +6,7 @@
 
 namespace apps {
 
-void scale_rotate_experiment(const std::string& image_path) {
+void scale_rotate_experiment(const std::string& image_path , std::optional<std::string> save_dir ) {
 
     auto img = imageproc::io::loadImage(image_path);
     std::cout<<img.channels();
@@ -21,9 +21,7 @@ void scale_rotate_experiment(const std::string& image_path) {
     cv::Mat result2 = transform.upsample(rotate_img, 2);
 
     imageproc::io::showImage("result 1 image", result1);
-    imageproc::io::saveImage("../op_images/result1.png" , result1);
     imageproc::io::showImage("result 2 image", result2);
-    imageproc::io::saveImage("../op_images/result2.png" , result2);
 
     cv::Mat r1, r2;
     result1.convertTo(r1, CV_32F);
@@ -38,7 +36,13 @@ void scale_rotate_experiment(const std::string& image_path) {
     diff.convertTo(diff8u, CV_8U);
 
     imageproc::io::showImage("diff" , diff8u);
-    imageproc::io::saveImage("../op_images/diff.png" , diff8u);
+    
+    if(save_dir.has_value()){
+        std::string s = *save_dir;
+        imageproc::io::saveImage(s+"/exp_2_result_1.png" , result1);
+        imageproc::io::saveImage(s+"/exp_2_result_2.png" , result2);
+        imageproc::io::saveImage(s+"/exp_2_diff.png" , diff8u);
+    }
     }
 }
 

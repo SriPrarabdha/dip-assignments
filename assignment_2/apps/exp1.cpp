@@ -5,6 +5,7 @@
 #include <opencv2/opencv.hpp>
 #include <iostream>
 #include <optional>
+using namespace std;
 
 namespace apps {
 
@@ -25,11 +26,13 @@ void run_blur_experiment(const std::string& image_path, std::optional<std::strin
 
         std::cout << "Filter size " << m << " → optimal variance = " << binary_res.second << "\n";
 
-        // imageproc::io::saveImage("out_blur_" + std::to_string(m) + ".png", blurred);
-        // imageproc::io::saveImage("out_bin_" + std::to_string(m) + ".png", binary);
-
         imageproc::io::showImage("thresholded image", binary_res.first);
+        if(save_dir.has_value()){
+            std::string s = *save_dir;
+            
+            imageproc::io::saveImage(s+"/exp1_"+to_string(m)+".png" , binary_res.first);
+        }
     }
 }
 
-} // namespace apps
+}
