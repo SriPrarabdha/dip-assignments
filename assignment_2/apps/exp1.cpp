@@ -15,16 +15,23 @@ void run_blur_experiment(const std::string& image_path, std::optional<std::strin
 
     imageproc::OtsuBinarizer binarizer;
     double opt_var = 0.12;
-    auto res = binarizer.apply(img);        
+    auto res = binarizer.apply(img, 0);        
     imageproc::io::showImage("thresholded image", res.first);
+    std::cout << " → optimal variance = " << res.second.first << " max var = " << res.second.second<< "\n";
+
+    if(save_dir.has_value()){
+        std::string s = *save_dir;
+        
+        imageproc::io::saveImage(s+"/exp1_original_thresholded image.png" , res.first);
+    }
 
     for (int m : {5, 29, 129}) {
         imageproc::BoxFilter bf(m);
         auto blurred_img = bf.apply(img);
 
-        auto binary_res = binarizer.apply(blurred_img);
+        auto binary_res = binarizer.apply(blurred_img , m);
 
-        std::cout << "Filter size " << m << " → optimal variance = " << binary_res.second << "\n";
+        std::cout << "Filter size " << m << " → optimal variance = " << binary_res.second.first << " withi = " << binary_res.second.second<< "\n";
 
         imageproc::io::showImage("thresholded image", binary_res.first);
         if(save_dir.has_value()){

@@ -9,7 +9,7 @@ using namespace std;
 
 namespace imageproc {
 
-    std::pair<cv::Mat,int> OtsuBinarizer::apply(const cv::Mat& img, std::optional<int> profile) const {
+    std::pair<cv::Mat,std::pair<int, int>> OtsuBinarizer::apply(const cv::Mat& img, std::optional<int> plot,std::optional<int> profile) const {
         bool profile_flag = profile.has_value();
 
         std::chrono::high_resolution_clock::time_point start;
@@ -18,7 +18,9 @@ namespace imageproc {
         }
 
         // 1. compute histogram
-        auto hist = OtsuBinarizer::computeHistogram(img);
+        std::vector<int> hist;
+        if(plot.has_value()) hist = OtsuBinarizer::computeHistogram(img, plot.value());
+        else hist = OtsuBinarizer::computeHistogram(img);
 
         // 2. get ready for computation 
         std::array<uint32_t, 256> cum_count{};
@@ -40,6 +42,15 @@ namespace imageproc {
         }
 
         uint32_t total_pixels = cum_count[255];
+
+        double total_mean = static_cast<double>(cum_sum[255]) / total_pixels;
+
+        double total_var = 0.0;
+        for (int i = 0; i <= 255; i++) {
+            double diff = i - total_mean;
+            total_var += diff * diff * hist[i];
+        }
+        total_var /= total_pixels;
 
         double max_var = -1e6;
         int opt_thres = 0;
@@ -68,6 +79,8 @@ namespace imageproc {
             if (var>max_var) {max_var = var; opt_thres = t;}
         }
 
+        double within_class_var = total_var - max_var;
+
         // cout<<opt_thres<<"\n";
 
         // 5. return thresholded binary image
@@ -79,7 +92,8 @@ namespace imageproc {
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
             std::cout << "Otsu Thresholding took " << duration.count() << " ms." << std::endl;
         }
-        return {output_img, opt_thres}; 
+        
+        return {output_img, {opt_thres, within_class_var}}; 
     }
 
     std::vector<int> OtsuBinarizer::computeHistogram(const cv::Mat& img, std::optional<int> plot) const {
@@ -110,12 +124,16 @@ namespace imageproc {
 
             // Plot histogram
             Gnuplot gp;
-            gp << "set title 'Grayscale Histogram'\n";
+            gp << "set terminal pngcairo size 800,600 enhanced font 'Arial,12'\n";  // PNG output
+            gp << "set output '../op_images/exp_1_histogram_" << plot.value() << ".png'\n";
+            if(plot.value()==0) gp << "set title 'Original Image Histogram'\n";
+            else gp << "set title 'Filtered Image filter size ("<<plot.value()<<" x "<<plot.value() <<") Histogram'\n";
             gp << "set xlabel 'Intensity'\n";
             gp << "set ylabel 'Frequency'\n";
             gp << "set style fill solid\n";
             gp << "plot '-' with boxes lc rgb 'blue' notitle\n";
             gp.send1d(histData);
+            gp << "unset output\n";
         }
         return hist;
     }
